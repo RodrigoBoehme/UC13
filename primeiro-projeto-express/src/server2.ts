@@ -1,3 +1,4 @@
+/*
 import express,{Request,Response}from "express";
 
 //criando a aplicação 
@@ -67,3 +68,38 @@ app.delete("/usuarios/:id",(req:Request,res:Response)=>{
 app.listen(PORT,()=>{
     console.log(`Servidor rodando em https://localhost:${PORT}`)
 })
+*/
+
+// Importando o framework Express
+import express, {
+  Request,//Tipo Que representa  a resposta do servidor
+  Response,//
+  NextFunction//Tipo usado em middlewares para liberar a execução
+
+} from "express";
+// Criação do server
+//a variavel app representa o servidor
+const app=express()
+//Porta onde o servidor ira rodar
+const PORT=3000
+
+//Middleware nativo do Express
+//Permite que o servidor enta JSON enviado no corpo da requisição(sem esse cara o req.body seria undefined)
+app.use(express.json())
+
+//cria uma array de strings
+//simula um banco de dados em memoria
+
+const usuario:string[]=[]
+
+//Função middleware personalizada
+//Ela sera executada ANTES das rotas
+function logMiddleware(
+  req:Request,//Dados da requisição
+  res:Response,//Resposta do servidor
+  next:NextFunction//Função que livera o fluxo
+){
+  //Exibe no terminal o método HTTP e a rota acessada
+  console.log(`${req.method} ${req.url}`)
+  //Libera a requisição para continuar o fluxo
+}
