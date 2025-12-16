@@ -103,3 +103,92 @@ function logMiddleware(
   console.log(`${req.method} ${req.url}`)
   //Libera a requisição para continuar o fluxo
 }
+/*aplica o middleware para todas as rotas entao a partir de agora toda a requisilçaio que chegar no serveidor passara primeiro pelo logMIDDLEWARE
+SENDO QEU ELE VAI VERIFICAR OS DADOS DIREITINGO entre requisição e rota*/
+app.use(logMiddleware)
+
+//GET -Listar/buscar usuarios
+//Define uma rota get no caminho /usuarios
+app.get("/usuarios",(req:Request,res:Response)=>{
+  //Retorna uma resposta em formato JSON
+  res.json({
+    total:usuario.length,//Quantidade de usuarios cadastrados
+    usuarios:usuario//Lista completa de usuarios
+  })
+})
+// -----------------------------
+// POST - Cadastra usuário
+// -----------------------------
+
+//Define uma rota POST no caminho /usuarios
+app.post("/usuarios",(req:Request,res:Response)=>{
+  //Captura o nome enviado no corpo da requisição
+  const nome=req.body.name
+  //Validação básica (verifica se o nome existe ou esta vazio)
+  if(!nome || nome.trim()===""){
+    return res.status(400).json({
+      erro:"Nome é obrigatório"
+    })
+  }
+  //Adiciona o nome no array
+  usuario.push(nome)
+  //Retorna uma resposta de sucesso
+  res.json({
+    mensagem:"Usuário cadastrado com sucesso!",
+    usuarios:usuario
+  })
+})
+// -----------------------------
+// PUT - Atualizar usuario
+// -----------------------------
+
+//Define rota PUT 
+app.put("/usuarios/:id",(req:Request,res:Response)=>{
+  // Converte o parametro da URL para numero
+  const id=Number(req.params.id)
+  //Captura o novo nome enviado no body
+  const novoNome=req.body.nome
+  //Verifica se existe usuario nesse indice
+  if(!usuario[id]){
+    return res.status(404).json({
+      erro:"Usuário não encontrado"
+    })
+  }
+  //Atualiza o usuario no Array
+  usuario[id]=novoNome
+  //Retorna confirmação
+  res.json({
+    mensagem:"Usuário atualizado com sucesso!",
+    usuarios:usuario
+  })
+})
+// -----------------------------
+// DELETE - Remover o usuário
+// -----------------------------
+// Define uma rota DELETE com o parametro :id (ele via rempover o elemento do index desse id... da array)
+app.delete("usuarios/:id",(req:Request,res:Response)=>{
+  //Converte o ID da URL para numero
+  const id=Number(req.params.id)
+  //Verifica se o usuario existe
+  if(!usuario[id]){
+    return res.status(404).json({
+      erro:"Usuário não encontrado!"
+    })
+  }
+  //Remove o usuário do array
+  usuario.splice(id,1)
+// Retorna confirmacão
+res.json({
+  mensagem:"Usuário removido com sucesso!",
+  usuarios:usuario
+})
+
+})
+// -----------------------------
+// INICIANDO O SERVIDOR
+// -----------------------------
+
+//Colocando o servidor para rodar cna porta definida
+app.listen(PORT,()=>{
+  console.log(`Servidor rodando em http://localhost:${PORT}`)
+})
