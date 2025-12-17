@@ -102,6 +102,7 @@ function logMiddleware(
   //Exibe no terminal o método HTTP e a rota acessada
   console.log(`${req.method} ${req.url}`)
   //Libera a requisição para continuar o fluxo
+  next()
 }
 /*aplica o middleware para todas as rotas entao a partir de agora toda a requisilçaio que chegar no serveidor passara primeiro pelo logMIDDLEWARE
 SENDO QEU ELE VAI VERIFICAR OS DADOS DIREITINGO entre requisição e rota*/
@@ -166,7 +167,7 @@ app.put("/usuarios/:id",(req:Request,res:Response)=>{
 // DELETE - Remover o usuário
 // -----------------------------
 // Define uma rota DELETE com o parametro :id (ele via rempover o elemento do index desse id... da array)
-app.delete("usuarios/:id",(req:Request,res:Response)=>{
+app.delete("/usuarios/:id",(req:Request,res:Response)=>{
   //Converte o ID da URL para numero
   const id=Number(req.params.id)
   //Verifica se o usuario existe
