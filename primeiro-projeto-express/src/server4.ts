@@ -97,3 +97,8 @@ app.post("/tarefas",(req:Request,res:Response)=>{
     //Retorna 201 (Created) com o objeto criado
     return res.status(201).json(novaTarefa)
 })
+//Inicializa o servidor na porta 3000
+app.listen(3000,()=>{
+    //Mensagem para confirmar que o servidor está rodando
+    console.log("Servidor rodando em http://localhost:3000")
+})
