@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 
 // Tipagem do objeto Tarefa
-
+/*
 type Tarefa = {
   id: number;
   titulo: string;
@@ -77,13 +77,13 @@ app.get("/tarefas/:id",(req:Request,res:Response)=>{
     return res.status(200).json(tarefa)
 })
 //POST /tarefas (com body) + validação via middleware
-app.post("/tarefas",(req:Request,res:Response)=>{
+app.post("/tarefas",validarTitulo,(req:Request,res:Response)=>{
     //Pega o titulo do body (ja foi validado pelo middleware)
     const {titulo}=req.body
 
     //Cria um novo id vaseado no tamanho do array
     const novoId=tarefas.length>0?tarefas[tarefas.length-1].id+1:1
-    /* Se a condição for verdadeira -> usa o valor após ? Se for falsa -> usa o valor após : */
+    // Se a condição for verdadeira -> usa o valor após ? Se for falsa -> usa o valor após :
     
     //Monta o objeto da nova tarefa
     const novaTarefa:Tarefa={
@@ -97,8 +97,80 @@ app.post("/tarefas",(req:Request,res:Response)=>{
     //Retorna 201 (Created) com o objeto criado
     return res.status(201).json(novaTarefa)
 })
+*/
 //Inicializa o servidor na porta 3000
-app.listen(3000,()=>{
-    //Mensagem para confirmar que o servidor está rodando
-    console.log("Servidor rodando em http://localhost:3000")
-})
+app.listen(3000, () => {
+  //Mensagem para confirmar que o servidor está rodando
+  console.log("Servidor rodando em http://localhost:3000");
+});
+
+type Produto = {
+  id: number;
+  nome: string;
+  preco: number;
+  emEstoque: boolean;
+};
+
+const produtos: Produto[] = [];
+
+//Middleware global de LOG (ele registra informações sobre cada requisição)
+app.use((req: Request, rs: Response, next: NextFunction) => {
+  //Mostra no terminal o metodo e a URL acessada
+  console.log(`[LOG] ${req.method} ${req.url}`);
+
+  //Libera o fluxo para o proximo middleware/rota
+  next();
+});
+
+//Middleware de validação de produto
+function validarProduto(req: Request, res: Response, next: NextFunction) {
+  const { nome } = req.body;
+  const { preco } = req.body;
+
+  if (!nome || String(nome).trim() === "") {
+    //Retorna 400 (Bad request) e encerra a requisição com return
+    return res.status(400).json({ erro: "O campo 'Nome' é obrigatório" });
+  }
+  if (!preco || String(preco).trim() === "") {
+    return res.status(400).json({ erro: "O campo 'Preço' é obrigatorio" });
+  }
+  //Se tudo está certo, libera para a rota continuar
+  next();
+}
+app.get("/produtos", (req: Request, res: Response) => {
+  const { emEstoque } = req.query;
+
+  if (emEstoque === undefined) {
+    return res.status(200).json(produtos);
+  }
+  const estoqueBool = String(emEstoque) === "true";
+  const filtrados = produtos.filter((t) => t.emEstoque === estoqueBool);
+  return res.status(200).json(filtrados);
+});
+app.get("/produtos/:id", (req: Request, res: Response) => {
+  const { id } = req.params;
+  const idNumba = Number(id);
+
+  const produto = produtos.find((t) => t.id);
+
+  if (!produto) {
+    return res.status(404).json({ erro: "Produto não encontrado" });
+  }
+  return res.status(200).json(produto);
+});
+app.post("/produtos", validarProduto, (req: Request, res: Response) => {
+  const { nome } = req.body;
+  const { preco } = req.body;
+  const novoId = produtos.length > 0 ? produtos[produtos.length - 1].id + 1 : 1;
+
+  const novoProduto:Produto={
+    id:novoId,
+    nome:nome,
+    preco:preco, 
+    emEstoque:true
+  }
+  produtos.push(novoProduto)
+
+  return res.status(201).json(novoProduto)
+  
+});
