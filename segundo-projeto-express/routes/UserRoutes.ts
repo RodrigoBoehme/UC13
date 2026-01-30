@@ -17,7 +17,7 @@ router.get("/users",controller.listAllUsers)
 router.put("/users/:id",controller.updateUser)
 
 //Rota para criar usuario
-router.post("users",controller.createUser)
+router.post("/users",controller.createUser)
 
 //Rota para deletar usuario pelo id
 router.delete("/users/:id",controller.deleteUser)
