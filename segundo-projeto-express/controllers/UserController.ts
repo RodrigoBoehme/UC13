@@ -38,7 +38,7 @@ export class UserController {
     //Obtem o id da url e converte em number
     const id: number = Number(req.params.id);
     //Dados que serão atualizados
-    const { nome, email } = req.params;
+    const { nome, email } = req.body;
     //Validação dos campo obrigatorios
     if (!nome || !email) {
       return res.status(400).json({
@@ -55,8 +55,8 @@ export class UserController {
     }
 
     //atualiza os dados
-    usuario.nome=String(nome);
-    usuario.email=String(email);
+    usuario.nome=nome;
+    usuario.email=email;
 
     //retorna 
     return res.status(200).json({
@@ -70,7 +70,11 @@ export class UserController {
     const id:number=Number(req.params.id)
     let index:number=usuarios.findIndex(user=>user.id==id)
     if(index===-1){
-        return res.status(404).json({mensagem:""})
+        return res.status(404).json({mensagem:"Usuario não encontrado"})
     }
+    //Remove o usuario do Array
+    usuarios.splice(index,1)
+    //retorna sucesso sem conteudo
+    return res.status(204).send()
   }
 }
