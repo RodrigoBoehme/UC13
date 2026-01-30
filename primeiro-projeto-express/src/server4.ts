@@ -103,7 +103,8 @@ app.listen(3000, () => {
   //Mensagem para confirmar que o servidor está rodando
   console.log("Servidor rodando em http://localhost:3000");
 });
-
+/*
+//atividade 2
 type Produto = {
   id: number;
   nome: string;
@@ -173,4 +174,51 @@ app.post("/produtos", validarProduto, (req: Request, res: Response) => {
 
   return res.status(201).json(novoProduto)
   
+});
+*/
+
+//Atividade 3
+type ticketChamada = {
+  id: number;
+  titulo: string;
+  prioridade: string;
+  status: string;
+};
+const chamadas: ticketChamada[] = [];
+app.use((req: Request, rs: Response, next: NextFunction) => {
+  //Mostra no terminal o metodo e a URL acessada
+  console.log(`[LOG] ${req.method} ${req.url}`);
+
+  //Libera o fluxo para o proximo middleware/rota
+  next();
+});
+function validaChamada(req: Request, res: Response, next: NextFunction) {
+  const { titulo } = req.body;
+  const { prioridade } = req.body;
+  if (!titulo || String(titulo).trim() === "") {
+    return res.status(400).json({ erro: "O titulo é obrigatorio" });
+  }
+  if (!prioridade || String(prioridade).trim() === "") {
+    return res.status(400).json({ erro: "A prioridade é obrigatoria" });
+  }
+  if (
+    String(prioridade).trim() === "baixa" ||
+    String(prioridade).trim() === "media" ||
+    String(prioridade).trim() === "alta"
+  ) {
+    next();
+  } else {
+    return res
+      .status(400)
+      .json({ erro: "A prioridade deve ser alta, media ou baixa" });
+  }
+}
+app.get("/chamados", (req: Request, res: Response) => {
+  const { status } = req.query;
+  const { prioridade } = req.query;
+
+  if (status === undefined && prioridade === undefined) {
+    return res.status(200).json(chamadas);
+  }
+//  const filtrados = chamadas.filter((t) => t.);
 });
