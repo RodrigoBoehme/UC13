@@ -17,6 +17,10 @@ export class UserController {
         .status(400)
         .json({ mensagem: "Id , Nome, email precisam ser informados" });
     }
+    const dupe=usuarios.find((user)=>user.id==id)
+    if(dupe){
+      return res.status(400).json({mensagem:"Já há usuario com esse id"})
+    }
     //Cria um novo usuario usando o model
     const usuario = new User(id, nome, email);
     //Adiciona o usuario no array
